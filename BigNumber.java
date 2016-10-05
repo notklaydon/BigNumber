@@ -22,7 +22,7 @@ public class BigNumber
                         //back to full sign and magnitude representation as
                         //the field conflicts with the method sign() below
     
-   /*(
+   /**
     *   constructor - takes a String input and parses the value to be stored
     * in a primitive integer array, 1-(n-1) of the array representing the
     * left-to-right reading of natural decimal numbers, in 10's complement
