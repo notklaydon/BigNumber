@@ -20,36 +20,36 @@ public class BigNumber {
                     //back to full sign and magnitude representation as
                     //the field conflicts with the method sign() below
 
-    /**
+    /* *
      * overloaded constructor
      *
      * modification: took entire body of method call and made new body of constructor
      * @author Eliakah Kakou
      * @param number
-     */
+     * /
     public BigNumber(String number) {
-        int[] numList new int[num.length()]; //determines array size
+        int[] numList = new int[number.length()]; //determines array size
         int index = 0; //char to start populating from
 
-        if (num.charAt(0) == '-') { //checks if negative
+        if (number.charAt(0) == '-') { //checks if negative
             sign = 1;
             index = 1;
-        } else if (num.charAt(0) == '+')  //check if positive
+        } else if (number.charAt(0) == '+')  //check if positive
             index = 1;
 
 
-        int numSize = num.length() - index; //substract 1 if there is a sign
+        int numSize = number.length() - index; //substract 1 if there is a sign
         for (int i = index; i < numSize; i++) { //populates array
-            int digit = Integer.parseInt("" + num.charAt(i));
+            int digit = Integer.parseInt("" + number.charAt(i));
             numList[i] = digit;
         }
 
 
-        this.bigNumberDigits = numList; /scans number number and returns populated list
-    }
+        this.bigNumberDigits = numList; //scans number number and returns populated list
+    }*/
 
     /**
-     * overloaded constructor
+     * constructor
      *
      * @author Erin Quigley
      * @param input
@@ -86,7 +86,7 @@ public class BigNumber {
      * @author Klaydon Balicanta
      */
     public void negate() {
-        if(this.sign = 0)
+        if(this.sign == 0)
             this.sign = 1;
         else 
             this.sign = 0;
@@ -322,8 +322,7 @@ public class BigNumber {
      * @param otherNum
      * @return
      */
-    public String add(BigNumber otherNum)
-    {
+    public String add(BigNumber otherNum) {
         String result = "";
 
         int[] sum;
@@ -333,55 +332,51 @@ public class BigNumber {
         //check which number has more digits, pad the shorter number accordingly with 0's
         //consider invoking normalize() after computation is finished
 
-        if(digits.length > otherNum.getDigits().length) //first number is bigger than second number
+        if(bigNumberDigits.length > otherNum.getNumber().length) //first number is bigger than second number
         {
-            int[] newDigits = new int[digits.length];
-            for(int i = 0; i < otherNum.getDigits().length; i++)
+            int[] newDigits = new int[bigNumberDigits.length];
+            for(int i = 0; i < otherNum.getNumber().length; i++)
             {
-                newDigits[i + (digits.length - otherNum.getDigits().length)] = otherNum.getDigits()[i];
+                newDigits[i + (bigNumberDigits.length - otherNum.getNumber().length)] = otherNum.getNumber()[i];
             }
-            otherNum.setDigits(newDigits);
-            tempSum = new int[digits.length];
+            otherNum.setNumber(newDigits);
+            tempSum = new int[bigNumberDigits.length];
         }
-        else if(digits.length < otherNum.getDigits().length) //second number is bigger than first number
+        else if(bigNumberDigits.length < otherNum.getNumber().length) //second number is bigger than first number
         {
-            int[] newDigits = new int[otherNum.getDigits().length];
-            for(int i = 0; i < digits.length; i++)
+            int[] newDigits = new int[otherNum.getNumber().length];
+            for(int i = 0; i < bigNumberDigits.length; i++)
             {
-                newDigits[i + (otherNum.getDigits().length - digits.length)] = digits[i];
+                newDigits[i + (otherNum.getNumber().length - bigNumberDigits.length)] = bigNumberDigits[i];
             }
-            this.setDigits(newDigits);
-            tempSum = new int[otherNum.getDigits().length];
+            this.setNumber(newDigits);
+            tempSum = new int[otherNum.getNumber().length];
         }
         else //both have same number of digits
         {
-            tempSum = new int[digits.length];
+            tempSum = new int[bigNumberDigits.length];
         }
 
         //NOTE: if both are negative or both are positive, we can add as normal and set the sign afterwards
         //NOTE: if one number is negative and the other is positive.......more work
 
         //now that we've padded with 0's if necessary, let's check the sign of each number
-        if(sign == otherNum.getSign()) //both have the same sign
-        {
+        if(sign == otherNum.getSign()) {//both have the same sign
             //adding two **positive** numbers of the **same length**
             int carry = 0;
 
-            for(int i = digits.length - 1; i >= 0; i--)
-            {
+            for(int i = bigNumberDigits.length - 1; i >= 0; i--) {
                 //add the two digits and the carry together
-                int temp = digits[i] + otherNum.getDigits()[i] + carry;
+                int temp = bigNumberDigits[i] + otherNum.getNumber()[i] + carry;
 
-                if(temp > 9) //carry the 1
-                {
-                    if(i == 0)//carry the 1 AND no more digits left
-                    {
+                if(temp > 9) {//carry the 1
+
+                    if(i == 0) {//carry the 1 AND no more digits left
                         carry = 1;
                         //make a new space for the carryover
                         sum = new int[tempSum.length + 1];
                         //copy the temp sum over into the new one
-                        for(int j = 0; j < tempSum.length; j++)
-                        {
+                        for(int j = 0; j < tempSum.length; j++) {
                             sum[j+1] = tempSum[j];
                         }
                         //put the rest of the digits in
@@ -390,44 +385,34 @@ public class BigNumber {
 
                         //assign the sign of the sum appropriately
                         //we already know both have the same sign here, so just check against the first number
-                        if(sign == pos)
-                        {
-                            sumSign = pos;
-                        }
-                        else if(sign == neg)
-                        {
-                            sumSign = neg;
+                        if(sign == POS) {
+                            sumSign = POS;
+                        } else if(sign == NEG) {
+                            sumSign = NEG;
                         }
 
                         //slap that shit in a BigNumber and toString it for the results
                         BigNumber answer = new BigNumber(sumSign, sum);
                         result = answer.toString();
-                    }
-                    else //carry the 1, more digits left to add
-                    {
+                    } else {//carry the 1, more digits left to add
                         carry = 1;
                         tempSum[i] = temp % 10;
                     }
 
-                }
-                else //no carry
-                {
+                } else {//no carry
                     carry = 0;
                     tempSum[i] = temp;
 
-                    if(i == 0)//no carry AND no more digits left
-                    {
+                    if(i == 0) {//no carry AND no more digits left
+
                         sum = tempSum;
 
                         //set the sign of the sum appropriately
                         //we already know both have the same sign here, so just check against the first number
-                        if(sign == pos)
-                        {
-                            sumSign = pos;
-                        }
-                        else if(sign == neg)
-                        {
-                            sumSign = neg;
+                        if(sign == POS) {
+                            sumSign = POS;
+                        } else if(sign == NEG) {
+                            sumSign = NEG;
                         }
 
                         //slap that shit in a new BigNumber & toString it for the results
@@ -437,24 +422,20 @@ public class BigNumber {
                 }
             }
         }
-        else if(sign != otherNum.getSign()) //different signs
-        {
+        else if(sign != otherNum.getSign()) {//different signs
             //numbers are opposite signs but same magnitude? answer = 0
             //but first we need to check the magnitude of each number
             //we'll look at them digit by digit and count how many matches there are
             int sameMag = 0;
-            for(int a = 0; a < digits.length; a++)
-            {
-                if(digits[a] == otherNum.getDigits()[a])
-                {
+            for(int a = 0; a < bigNumberDigits.length; a++) {
+                if(bigNumberDigits[a] == otherNum.getNumber()[a]) {
                     sameMag++;
                 }
             }
 
             //if we had the same number of matches as we do digits, then they're the same
-            if(sameMag == digits.length)
-            {
-                BigNumber answer = new BigNumber(pos, new int[1]);
+            if(sameMag == bigNumberDigits.length) {
+                BigNumber answer = new BigNumber(POS, new int[1]);
                 result = answer.toString();
                 return result;
             }
@@ -464,34 +445,25 @@ public class BigNumber {
 
             //figure out which one has greater magnitude
             boolean firstIsGreater = false;
-            for(int c = 0; c < digits.length; c++)
-            {
-                if(digits[c] > otherNum.getDigits()[c])
-                {
+            for(int c = 0; c < bigNumberDigits.length; c++) {
+                if(bigNumberDigits[c] > otherNum.getNumber()[c]) {
                     firstIsGreater = true;
                 }
             }
 
-            if(firstIsGreater == true) //if the first number is greater than the second
-            {
+            if(firstIsGreater == true) {//if the first number is greater than the second
                 int carry = 0;
 
-                for(int i = digits.length - 1; i >= 0 ; i--)
-                {
+                for(int i = bigNumberDigits.length - 1; i >= 0 ; i--) {
                     int temp = 0;
 
-                    if((digits[i] + carry) < otherNum.getDigits()[i])
-                    {
-                        temp = (10 + digits[i] + carry) - otherNum.getDigits()[i];
+                    if((bigNumberDigits[i] + carry) < otherNum.getNumber()[i]) {
+                        temp = (10 + bigNumberDigits[i] + carry) - otherNum.getNumber()[i];
                         carry = -1;
-                    }
-                    else if((digits[i] + carry) > otherNum.getDigits()[i])
-                    {
-                        temp = (digits[i] + carry) - otherNum.getDigits()[i];
+                    } else if((bigNumberDigits[i] + carry) > otherNum.getNumber()[i]) {
+                        temp = (bigNumberDigits[i] + carry) - otherNum.getNumber()[i];
                         carry = 0;
-                    }
-                    else
-                    {
+                    } else {
                         carry = 0;
                     }
 
@@ -504,33 +476,24 @@ public class BigNumber {
                 //normalize answer here when normalize() is written
                 result = answer.toString();
 
-            }
-            else //the second number was greater than the first number
-            {
+            } else { //the second number was greater than the first number
                 int carry = 0;
 
-                for(int i = otherNum.getDigits().length - 1; i >= 0 ; i--)
-                {
+                for(int i = otherNum.getNumber().length - 1; i >= 0 ; i--) {
                     int temp = 0;
 
-                    if((otherNum.getDigits()[i] + carry) < digits[i])
-                    {
-                        temp = (10 + otherNum.getDigits()[i] + carry) - digits[i];
+                    if((otherNum.getNumber()[i] + carry) < bigNumberDigits[i]) {
+                        temp = (10 + otherNum.getNumber()[i] + carry) - bigNumberDigits[i];
                         carry = -1;
-                    }
-                    else if((otherNum.getDigits()[i] + carry) > digits[i])
-                    {
-                        temp = (otherNum.getDigits()[i] + carry) - digits[i];
+                    } else if((otherNum.getNumber()[i] + carry) > bigNumberDigits[i]) {
+                        temp = (otherNum.getNumber()[i] + carry) - bigNumberDigits[i];
                         carry = 0;
-                    }
-                    else
-                    {
+                    } else {
                         carry = 0;
                     }
 
                     tempSum[i] = temp;
                 }
-
                 sumSign = otherNum.getSign();
                 sum = tempSum;
                 BigNumber answer = new BigNumber(sumSign, sum);
@@ -538,25 +501,29 @@ public class BigNumber {
                 result = answer.toString();
             }
         }
-
         return result;
     }
 
-    //placeholder
+    /**
+     * placeholder
+     *
+     * @param otherNum
+     * @return
+     */
     public String subtract(BigNumber otherNum)
     {
 
         if(sign != otherNum.getSign()) //numbers have different signs
         {
             //match the signs up and then add them together
-            if(sign == neg) //first number negative, second number positive
+            if(sign == NEG) //first number negative, second number positive
             {
-                otherNum.setSign(neg);
+                otherNum.setSign(NEG);
                 return add(otherNum);
             }
             else //first number positive, second number negative
             {
-                otherNum.setSign(pos);
+                otherNum.setSign(POS);
                 return add(otherNum);
             }
         }
@@ -566,36 +533,36 @@ public class BigNumber {
             //add()'s 0 padding hasn't happened yet, so check the number of digits first
             //if they both have the same number of digits, they MAY have the same magnitude
             //if they don't, then we know they don't have the same magnitude
-            if(digits.length == otherNum.getDigits().length)
+            if(bigNumberDigits.length == otherNum.getNumber().length)
             {
                 //now we need to check them digit by digit and count how many matches there are
                 int sameMag = 0;
-                for(int a = 0; a < digits.length; a++)
+                for(int a = 0; a < bigNumberDigits.length; a++)
                 {
-                    if(digits[a] == otherNum.getDigits()[a])
+                    if(bigNumberDigits[a] == otherNum.getNumber()[a])
                     {
                         sameMag++;
                     }
                 }
 
                 //if we had the same number of matches as we do digits, then they're the same
-                if(sameMag == digits.length)
+                if(sameMag == bigNumberDigits.length)
                 {
-                    BigNumber answer = new BigNumber(pos, new int[1]);
+                    BigNumber answer = new BigNumber(POS, new int[1]);
                     return answer.toString();
                 }
             }
 
             //so, they aren't the same magnitude but have the same signs?
             //change the sign of the second number according to the first one's sign and send it to add()
-            if(sign == neg) //first number negative, set second number to positive
+            if(sign == NEG) //first number negative, set second number to positive
             {
-                otherNum.setSign(pos);
+                otherNum.setSign(POS);
                 return add(otherNum);
             }
             else //first number positive, set second number to negative
             {
-                otherNum.setSign(neg);
+                otherNum.setSign(NEG);
                 return add(otherNum);
             }
         }
@@ -610,7 +577,7 @@ public class BigNumber {
     private BigNumber(int newsign, int[] newdigits)
     {
         this.setSign(newsign);
-        this.setDigits(newdigits);
+        this.setNumber(newdigits);
     }
 
     /*GETTERS AND SETTERS*/
