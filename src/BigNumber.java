@@ -1,190 +1,346 @@
 /**
- * //Create version2 package of this class
+ * BigNumber
+ *
+ * Description of object go hear.
+ *
  * @author Eliakah Kakou
  * @author Erin Quigley
  * @author Klaydon Balicanta
- * 
+ * Date Due : 11 October 2016
+ * Class : Computer Cryptography (CS 07350 1)
+ * Professor Bergmann
  */
-package bignumber;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class BigNumber {
-    static final int POS = 0; //change to booleans or enum maybe?
-    static final int NEG = 1; //change to booleans or enum maybe?
+    private static final int POS = 0; //change to booleans or enum maybe?
+    private static final int NEG = 1; //change to booleans or enum maybe?
 
-    int[] bigNumberDigits;
+    private int[] bigNumberDigits;
     private int sign = 0;   //indicates positivity (0) or negativity (1)
-
-                    //will have to rename this is one needs to convert
-                    //back to full sign and magnitude representation as
-                    //the field conflicts with the method sign() below
-
-    /* *
-     * overloaded constructor
-     *
-     * modification: took entire body of method call and made new body of constructor
-     * @author Eliakah Kakou
-     * @param number
-     * /
-    public BigNumber(String number) {
-        int[] numList = new int[number.length()]; //determines array size
-        int index = 0; //char to start populating from
-
-        if (number.charAt(0) == '-') { //checks if negative
-            sign = 1;
-            index = 1;
-        } else if (number.charAt(0) == '+')  //check if positive
-            index = 1;
-
-
-        int numSize = number.length() - index; //substract 1 if there is a sign
-        for (int i = index; i < numSize; i++) { //populates array
-            int digit = Integer.parseInt("" + number.charAt(i));
-            numList[i] = digit;
-        }
-
-
-        this.bigNumberDigits = numList; //scans number number and returns populated list
-    }*/
 
     /**
      * constructor
      *
-     * @author Erin Quigley
-     * @param input
+     * author Erin Quigley
+     * @param input string to parse into array instantiated to hold digits of BigNumber
      */
-    public BigNumber(String input)
-    {
+    public BigNumber(String input) {
         //put a pattern checker in here later to validate correct input
 
         //get the digits from the string
         char[] inputNums = input.toCharArray();
 
         //check sign of number
-        if(inputNums[0] == '-') { //if the input string starts with a - sign, set sign to negative
+        if (inputNums[0] == '-') { //if the input string starts with a - sign, set sign to negative
             sign = NEG;
-
             bigNumberDigits = new int[inputNums.length - 1]; //initialize the array of digits
-
-            for(int i = 1; i < inputNums.length; i++) //skip first character because it was a - sign, get rest of digits
+            for (int i = 1; i < inputNums.length; i++) //skip first character because it was a - sign, get rest of digits
                 bigNumberDigits[i - 1] = inputNums[i] - 48; //character encoding offset...for now
         } else {
             sign = POS;
-
-            bigNumberDigits = new int[inputNums.length] //initialize the array of digits
-
-            for(int i = 0; i < inputNums.length; i++) //get digits
+            bigNumberDigits = new int[inputNums.length]; //initialize the array of digits
+            for (int i = 0; i < inputNums.length; i++) //get digits
                 bigNumberDigits[i] = inputNums[i] - 48; //character encoding offset...for now
         }
     }
 
     /**
-     * negate
+     * weird private constructor because this method of making a BigNumber should not be public,
+     * but I need to use this elsewhere currently
      *
-     * sign negation for sign and magnitude BigNumber representation
-     * @author Klaydon Balicanta
+     * author Erin Quigley
+     * @param newsign
+     * @param newdigits
      */
-    public void negate() {
-        if(this.sign == 0)
-            this.sign = 1;
-        else 
-            this.sign = 0;
+    private BigNumber(int newsign, int[] newdigits) {
+        this.setSign(newsign);
+        this.setNumber(newdigits);
     }
 
-    
-   /**
-    * toString
-    *
-    * converts BigNumber into a printable String and returns that String
-    * @return String representation of BigNumber object
-    */
-    @Override
-    public String toString() {
-        String result = "";
-        if(sign == neg)
-            result += "-";
-
-        for(int i = 0; i < this.bigNumberDigits.length; i++) {
-            result += this.bigNumberDigits[i];
-        }
-        return result;
-    }
-
-   /**
-    * equals
-    *
-    * determines whether compared BigNumber is equal to an
-    * input BigNumber
-    * @return boolean value of equality check
-    */
-    public boolean equals(BigNumber bn) {
-        this.normalize();
-        bn.normalize();
-        
-        if((bn.sign() != this.sign()) || (bn.bigNumberDigits.length != this.bigNumberDigits.length))
-            return false;
-        else {
-            for(int i = 0; i < this.bigNumberDigits.length; i++) {
-                if(this.bigNumberDigits[i] != bn.bigNumberDigits[i])
-                    return false;
-            }
-            return true;
-        }
-    }
-
-   /**
-    *   compareTo - compares BigNumber object to input BigNumber
-    * Compares this object with the specified object for order. 
-    * Returns a negative integer, zero, or a positive integer 
-    * as this object is less than, equal to, or greater than 
-    * the specified object.
-    *
-    */
-    public int compareTo(BigNumber bn) {
-        if(this.sign() < bn.sign()) {
-            return 1;   /*will return positive integer if compared BigNumber
-                        is greater than this BigNumber Object*/
-        } else if (this.sign() > bn.sign()) {
-            return -1;  /*will return negative integer if compared BigNumber
-                        is lesser than this BigNumber object*/
-        }
-        else
-            return 0;   /*will return 0 if compared BigNumber and this BigNumber
-                        object are equal sign*/
-    }
-    
     /**
-     * sign
+     * add
      *
-     * @author Klaydon Balicanta
-     * @return the value of a BigNumber as a 0 (positive) or 1 (negative)
-     * */
-    public int sign() {
-        return this.sign;
-    }
+     * will change to BigNumber instead of String later
+     * get the general idea down now
+     *
+     * author Erin Quigley
+     * @param BNtoAdd BigNumber argument to add to this BigNumber making method call
+     * @return BigNumber sum of BigNumber addition
+     */
+    public BigNumber add(BigNumber BNtoAdd) {
+        BigNumber finalAnswer = new BigNumber("0"); /*initialize to 0 BigInteger, to satisfy final return at the
+                                                    end of this block. will be overwritten later. */
+        int[] sum;
+        int[] tempSum;
+        int sumSign = 2; //garbage initialization
 
-   /**
-    * normalize
-    *
-    * @author Klaydon Balicanta
-    * removes front set of excess padded signs (mainly used for if 10's complement number)
-    */
-    public void normalize() {
-        int indexHalt = this.bigNumberDigits[0];
-            while(bigNumberDigits[indexHalt] == bigNumberDigits[indexHalt + 1])
-            {indexHalt += 1;}
-            this.bigNumberDigits = Arrays.copyOfRange(bigNumberDigits, indexHalt, bigNumberDigits.length - 1);
+        //check which number has more digits, pad the shorter number accordingly with 0's
+        //consider invoking normalize() after computation is finished
+
+        if(bigNumberDigits.length > BNtoAdd.getNumber().length) //first number is bigger than second number
+        {
+            int[] newDigits = new int[bigNumberDigits.length];
+            for(int i = 0; i < BNtoAdd.getNumber().length; i++)
+            {
+                newDigits[i + (bigNumberDigits.length - BNtoAdd.getNumber().length)] = BNtoAdd.getNumber()[i];
+            }
+            BNtoAdd.setNumber(newDigits);
+            tempSum = new int[bigNumberDigits.length];
+        } else if(bigNumberDigits.length < BNtoAdd.getNumber().length) { //second number is bigger than first number
+            int[] newDigits = new int[BNtoAdd.getNumber().length];
+            for(int i = 0; i < bigNumberDigits.length; i++) {
+                newDigits[i + (BNtoAdd.getNumber().length - bigNumberDigits.length)] = bigNumberDigits[i];
+            }
+            this.setNumber(newDigits);
+            tempSum = new int[BNtoAdd.getNumber().length];
+        } else { //both have same number of digits
+            tempSum = new int[bigNumberDigits.length];
+        }
+
+        //NOTE: if both are negative or both are positive, we can add as normal and set the sign afterwards
+        //NOTE: if one number is negative and the other is positive.......more work
+
+        //now that we've padded with 0's if necessary, let's check the sign of each number
+        if(sign == BNtoAdd.getSign()) { //both have the same sign
+            //adding two **positive** numbers of the **same length**
+            int carry = 0;
+
+            for(int i = bigNumberDigits.length - 1; i >= 0; i--) {
+                //add the two digits and the carry together
+                int temp = bigNumberDigits[i] + BNtoAdd.getNumber()[i] + carry;
+
+                if(temp > 9) {//carry the 1
+
+                    if(i == 0) {//carry the 1 AND no more digits left
+                        carry = 1;
+                        //make a new space for the carryover
+                        sum = new int[tempSum.length + 1];
+                        //copy the temp sum over into the new one
+                        for(int j = 0; j < tempSum.length; j++) {
+                            sum[j+1] = tempSum[j];
+                        }
+                        //put the rest of the digits in
+                        sum[1] = temp % 10;
+                        sum[0] = carry;
+
+                        //assign the sign of the sum appropriately
+                        //we already know both have the same sign here, so just check against the first number
+                        if(sign == POS) {
+                            sumSign = POS;
+                        } else if(sign == NEG) {
+                            sumSign = NEG;
+                        }
+
+                        //slap that shit in a BigNumber and toString it for the results
+                        finalAnswer = new BigNumber(sumSign, sum);
+                    } else { //carry the 1, more digits left to add
+                        carry = 1;
+                        tempSum[i] = temp % 10;
+                    }
+
+                } else { //no carry
+                    carry = 0;
+                    tempSum[i] = temp;
+
+                    if(i == 0) {//no carry AND no more digits left
+
+                        sum = tempSum;
+
+                        //set the sign of the sum appropriately
+                        //we already know both have the same sign here, so just check against the first number
+                        if(sign == POS) {
+                            sumSign = POS;
+                        } else if(sign == NEG) {
+                            sumSign = NEG;
+                        }
+
+                        //slap that shit in a new BigNumber & toString it for the results
+                        finalAnswer = new BigNumber(sumSign, sum);
+                    }
+                }
+            }
+        }
+        else if(sign != BNtoAdd.getSign()) {//different signs
+            //numbers are opposite signs but same magnitude? answer = 0
+            //but first we need to check the magnitude of each number
+            //we'll look at them digit by digit and count how many matches there are
+            int sameMag = 0;
+            for(int a = 0; a < bigNumberDigits.length; a++) {
+                if(bigNumberDigits[a] == BNtoAdd.getNumber()[a]) {
+                    sameMag++;
+                }
+            }
+
+            //if we had the same number of matches as we do digits, then they're the same
+            if(sameMag == bigNumberDigits.length) {
+                finalAnswer = new BigNumber(POS, new int[1]);
+                return finalAnswer;
+            }
+
+            //at this point we know that the numbers have different signs and magnitudes,
+            //so we have to subtract now
+
+            //figure out which one has greater magnitude
+            boolean firstIsGreater = false;
+            for(int c = 0; c < bigNumberDigits.length; c++) {
+                if(bigNumberDigits[c] > BNtoAdd.getNumber()[c]) {
+                    firstIsGreater = true;
+                }
+            }
+
+            if(firstIsGreater) {//if the first number is greater than the second
+                int carry = 0;
+
+                for(int i = bigNumberDigits.length - 1; i >= 0 ; i--) {
+                    int temp = 0;
+
+                    if((bigNumberDigits[i] + carry) < BNtoAdd.getNumber()[i]) {
+                        temp = (10 + bigNumberDigits[i] + carry) - BNtoAdd.getNumber()[i];
+                        carry = -1;
+                    } else if((bigNumberDigits[i] + carry) > BNtoAdd.getNumber()[i]) {
+                        temp = (bigNumberDigits[i] + carry) - BNtoAdd.getNumber()[i];
+                        carry = 0;
+                    } else {
+                        carry = 0;
+                    }
+
+                    tempSum[i] = temp;
+                }
+
+                sumSign = sign;
+                sum = tempSum;
+                finalAnswer = new BigNumber(sumSign, sum);
+                finalAnswer.normalize();
+
+            } else { //the second number was greater than the first number
+                int carry = 0;
+
+                for(int i = BNtoAdd.getNumber().length - 1; i >= 0 ; i--) {
+                    int temp = 0;
+
+                    if((BNtoAdd.getNumber()[i] + carry) < bigNumberDigits[i]) {
+                        temp = (10 + BNtoAdd.getNumber()[i] + carry) - bigNumberDigits[i];
+                        carry = -1;
+                    } else if((BNtoAdd.getNumber()[i] + carry) > bigNumberDigits[i]) {
+                        temp = (BNtoAdd.getNumber()[i] + carry) - bigNumberDigits[i];
+                        carry = 0;
+                    } else {
+                        carry = 0;
+                    }
+
+                    tempSum[i] = temp;
+                }
+                sumSign = BNtoAdd.getSign();
+                sum = tempSum;
+                finalAnswer = new BigNumber(sumSign, sum);
+                finalAnswer.normalize();
+            }
+        }
+        return finalAnswer; //may need to get rid of because Erin covers all clauses when getting to this point
     }
 
     /**
-     * multiply //made by Eliakah
+     * subtract
+     *
+     * author Erin Quigley
+     * @param otherNum BigNumber argument to subtract from this BigNumber making method call
+     * @return BigNumber difference of BigNumber subtraction
+     */
+    public BigNumber subtract(BigNumber otherNum) {
+        if(sign != otherNum.getSign()) {  //numbers have different signs
+            //match the signs up and then add them together
+            if(sign == NEG) { //first number negative, second number positive
+                otherNum.setSign(NEG);
+                return add(otherNum);
+            } else { //first number positive, second number negative
+                otherNum.setSign(POS);
+                return add(otherNum);
+            }
+        } else { //numbers have the same sign
+            //numbers are same sign and magnitude? answer = 0
+            //add()'s 0 padding hasn't happened yet, so check the number of digits first
+            //if they both have the same number of digits, they MAY have the same magnitude
+            //if they don't, then we know they don't have the same magnitude
+            if(bigNumberDigits.length == otherNum.getNumber().length) {
+                //now we need to check them digit by digit and count how many matches there are
+                int sameMag = 0;
+                for(int a = 0; a < bigNumberDigits.length; a++) {
+                    if(bigNumberDigits[a] == otherNum.getNumber()[a]) {
+                        sameMag++;
+                    }
+                }
+
+                //if we had the same number of matches as we do digits, then they're the same
+                if(sameMag == bigNumberDigits.length) {
+                    BigNumber answer = new BigNumber(POS, new int[1]);  //makes call to the weird private constructor
+                    return answer;
+                }
+            }
+
+            //so, they aren't the same magnitude but have the same signs?
+            //change the sign of the second number according to the first one's sign and send it to add()
+            if(sign == NEG) { //first number negative, set second number to positive
+                otherNum.setSign(POS);
+                return add(otherNum);
+            } else { //first number positive, set second number to negative
+                otherNum.setSign(NEG);
+                return add(otherNum);
+            }
+        }
+    }
+
+    /**
+     * divide
+     *
+     * This method checks if a big number is less than, more than, or equal to the current number
+     * if it's more than or equals to , it exits the loop and returns the value accumulated
+     *
+     * author Eliakah Kakou
+     * @param bN BigNumber argument to divide by this BigNumber making method call
+     * @return quotient of BigNumber division
+     */
+    public BigNumber divide(BigNumber bN){
+        int value = 0;
+        //if the divider is bigger just return 0
+        if(compareTo(bN) > 0)
+            return new BigNumber("0");
+
+        //otherwise
+        BigNumber currentVal = bN;
+        Boolean flag = true;
+
+        while(flag){//while flag is true
+            if(compareTo(currentVal.add(currentVal)) >= 0) { //if it's equal to or less than
+                if (compareTo(currentVal.add(currentVal)) > 0) { //if less than
+                    currentVal = currentVal.add(currentVal);
+                    value++;
+                }else { //if equal to
+                    currentVal = currentVal.add(currentVal);
+                    value++;
+                    flag = false;
+                }
+            }else{ //if more than
+                flag = false;
+            }
+        }
+
+        return new BigNumber(""+value); //for now
+    }
+
+    /**
+     * multiply
      *
      * This method uses shifting and addition to get the multiplication result
      * as illustrated here: https://www.youtube.com/watch?v=bxAxTMbQii4
      *
-     * @param bN
+     * author Eliakah Kakou
+     * @param bN BigNumber argument to multiply to this BigNumber making method call
+     * @return BigNumber product of BigNumber multiplication
      */
+
+
     public BigNumber multiply(BigNumber bN) {
         int zeros = 0; //number of zeros being padded
         int carry = 0; //carry from addition
@@ -217,7 +373,6 @@ public class BigNumber {
                         rslt_BN[0] = rslt_BN[1]; // and set the result to the second digit
                         rslt_BN = new int[]{rslt_BN[1]}; // set the extra digit to null
                     } else {
-
                         carry = 0; //set carry to zero if result is less than 2 digits
                     }
                     for (int k = rslt_BN.length - 1; k >= 0; k--) {
@@ -236,52 +391,49 @@ public class BigNumber {
         for (int i = 1; i < rows.size(); i++) {
             finalBig = finalBig.add(new BigNumber(""+concatinateNumber(toIntArray(rows.get(i)))) );
         }
-
         return finalBig;
-
     }
 
     /**
-     * divide //made by Eliakah
+     * takes an array and concatinates it, returns it as an integer number
      *
-     * This method checks if a big number is less than, more than, or equal to the current number
-     * if it's more than or equals to , it exits the loop and returns the value accumulated
-     * @param bN
+     * author Eliakah Kakou
+     * @param list
      * @return
      */
-    BigNumber divide(BigNumber bN){
-        int value = 0;
-        //if the divider is bigger just return 0
-        if(compareTo(bN) > 0)
-            return new BigNumber("0");
-
-        //otherwise
-        BigNumber currentVal = bN;
-        Boolean flag = true;
-
-        while(flag){//while flag is true
-            if(compareTo(currentVal.add(currentVal)) >= 0) { //if it's equal to or less than
-                if (compareTo(currentVal.add(currentVal)) > 0) { //if less than
-                    currentVal = currentVal.add(currentVal);
-                    value++;
-                }else { //if equal to
-                    currentVal = currentVal.add(currentVal);
-                    value++;
-                    flag = false;
-                }
-            }else{ //if more than
-                flag = false;
-            }
+    private int concatinateNumber(int[] list) {
+        int bigNum = 0;
+        String str = "";
+        for (int i = 0; i < list.length; i++) {
+            str += list[i];
         }
 
-        return new BigNumber(""+value); //for now
+        bigNum = Integer.parseInt(str);
+        return bigNum;
     }
 
     /**
-     * factor //made by Eliakah
+     *
+     * @param list
+     * @return
+     */
+    private int[] toIntArray(ArrayList<Integer> list){
+        int[] convertedList = new int[list.size()];
+        for (int i=0; i < convertedList.length; i++)
+        {
+            convertedList[i] = list.get(i);
+        }
+
+        return convertedList;
+    }
+
+    /**
+     * factor
      *
      * This method returns a list of factors of the current number
-     * @return
+     *
+     * author Eliakah Kakou
+     * @return ArrayList of factors of BigNumber making method call
      */
     public ArrayList<BigNumber> factor(){
         BigNumber remainder = this; // number used to deduce factors until = to 1
@@ -305,312 +457,222 @@ public class BigNumber {
                     factors.add(remainder);
                     break;
                 }else {
-                    tryFactor = tryFactor.add(new BigNumber("1"));
+                    tryFactor = tryFactor.add((new BigNumber("1")));
                 }
             }
         }
         return factors;
     }
 
-    //
-
     /**
-     * add
+     * negate
      *
-     * will change to BigNumber instead of String later
-     * get the general idea down now
-     * @param otherNum
-     * @return
+     * sign negation for a BigNumber object
+     *
+     * author Klaydon Balicanta
+     * @return negated form of calling BigNumber object
      */
-    public String add(BigNumber otherNum) {
-        String result = "";
+    public BigNumber negate() {
+        if(this.getSign() == 0)
+            this.setSign(1);
+        else
+            this.setSign(0);
 
-        int[] sum;
-        int[]tempSum;
-        int sumSign = 2; //garbage initialization
-
-        //check which number has more digits, pad the shorter number accordingly with 0's
-        //consider invoking normalize() after computation is finished
-
-        if(bigNumberDigits.length > otherNum.getNumber().length) //first number is bigger than second number
-        {
-            int[] newDigits = new int[bigNumberDigits.length];
-            for(int i = 0; i < otherNum.getNumber().length; i++)
-            {
-                newDigits[i + (bigNumberDigits.length - otherNum.getNumber().length)] = otherNum.getNumber()[i];
-            }
-            otherNum.setNumber(newDigits);
-            tempSum = new int[bigNumberDigits.length];
-        }
-        else if(bigNumberDigits.length < otherNum.getNumber().length) //second number is bigger than first number
-        {
-            int[] newDigits = new int[otherNum.getNumber().length];
-            for(int i = 0; i < bigNumberDigits.length; i++)
-            {
-                newDigits[i + (otherNum.getNumber().length - bigNumberDigits.length)] = bigNumberDigits[i];
-            }
-            this.setNumber(newDigits);
-            tempSum = new int[otherNum.getNumber().length];
-        }
-        else //both have same number of digits
-        {
-            tempSum = new int[bigNumberDigits.length];
-        }
-
-        //NOTE: if both are negative or both are positive, we can add as normal and set the sign afterwards
-        //NOTE: if one number is negative and the other is positive.......more work
-
-        //now that we've padded with 0's if necessary, let's check the sign of each number
-        if(sign == otherNum.getSign()) {//both have the same sign
-            //adding two **positive** numbers of the **same length**
-            int carry = 0;
-
-            for(int i = bigNumberDigits.length - 1; i >= 0; i--) {
-                //add the two digits and the carry together
-                int temp = bigNumberDigits[i] + otherNum.getNumber()[i] + carry;
-
-                if(temp > 9) {//carry the 1
-
-                    if(i == 0) {//carry the 1 AND no more digits left
-                        carry = 1;
-                        //make a new space for the carryover
-                        sum = new int[tempSum.length + 1];
-                        //copy the temp sum over into the new one
-                        for(int j = 0; j < tempSum.length; j++) {
-                            sum[j+1] = tempSum[j];
-                        }
-                        //put the rest of the digits in
-                        sum[1] = temp % 10;
-                        sum[0] = carry;
-
-                        //assign the sign of the sum appropriately
-                        //we already know both have the same sign here, so just check against the first number
-                        if(sign == POS) {
-                            sumSign = POS;
-                        } else if(sign == NEG) {
-                            sumSign = NEG;
-                        }
-
-                        //slap that shit in a BigNumber and toString it for the results
-                        BigNumber answer = new BigNumber(sumSign, sum);
-                        result = answer.toString();
-                    } else {//carry the 1, more digits left to add
-                        carry = 1;
-                        tempSum[i] = temp % 10;
-                    }
-
-                } else {//no carry
-                    carry = 0;
-                    tempSum[i] = temp;
-
-                    if(i == 0) {//no carry AND no more digits left
-
-                        sum = tempSum;
-
-                        //set the sign of the sum appropriately
-                        //we already know both have the same sign here, so just check against the first number
-                        if(sign == POS) {
-                            sumSign = POS;
-                        } else if(sign == NEG) {
-                            sumSign = NEG;
-                        }
-
-                        //slap that shit in a new BigNumber & toString it for the results
-                        BigNumber answer = new BigNumber(sumSign, sum);
-                        result = answer.toString();
-                    }
-                }
-            }
-        }
-        else if(sign != otherNum.getSign()) {//different signs
-            //numbers are opposite signs but same magnitude? answer = 0
-            //but first we need to check the magnitude of each number
-            //we'll look at them digit by digit and count how many matches there are
-            int sameMag = 0;
-            for(int a = 0; a < bigNumberDigits.length; a++) {
-                if(bigNumberDigits[a] == otherNum.getNumber()[a]) {
-                    sameMag++;
-                }
-            }
-
-            //if we had the same number of matches as we do digits, then they're the same
-            if(sameMag == bigNumberDigits.length) {
-                BigNumber answer = new BigNumber(POS, new int[1]);
-                result = answer.toString();
-                return result;
-            }
-
-            //at this point we know that the numbers have different signs and magnitudes,
-            //so we have to subtract now
-
-            //figure out which one has greater magnitude
-            boolean firstIsGreater = false;
-            for(int c = 0; c < bigNumberDigits.length; c++) {
-                if(bigNumberDigits[c] > otherNum.getNumber()[c]) {
-                    firstIsGreater = true;
-                }
-            }
-
-            if(firstIsGreater == true) {//if the first number is greater than the second
-                int carry = 0;
-
-                for(int i = bigNumberDigits.length - 1; i >= 0 ; i--) {
-                    int temp = 0;
-
-                    if((bigNumberDigits[i] + carry) < otherNum.getNumber()[i]) {
-                        temp = (10 + bigNumberDigits[i] + carry) - otherNum.getNumber()[i];
-                        carry = -1;
-                    } else if((bigNumberDigits[i] + carry) > otherNum.getNumber()[i]) {
-                        temp = (bigNumberDigits[i] + carry) - otherNum.getNumber()[i];
-                        carry = 0;
-                    } else {
-                        carry = 0;
-                    }
-
-                    tempSum[i] = temp;
-                }
-
-                sumSign = sign;
-                sum = tempSum;
-                BigNumber answer = new BigNumber(sumSign, sum);
-                //normalize answer here when normalize() is written
-                result = answer.toString();
-
-            } else { //the second number was greater than the first number
-                int carry = 0;
-
-                for(int i = otherNum.getNumber().length - 1; i >= 0 ; i--) {
-                    int temp = 0;
-
-                    if((otherNum.getNumber()[i] + carry) < bigNumberDigits[i]) {
-                        temp = (10 + otherNum.getNumber()[i] + carry) - bigNumberDigits[i];
-                        carry = -1;
-                    } else if((otherNum.getNumber()[i] + carry) > bigNumberDigits[i]) {
-                        temp = (otherNum.getNumber()[i] + carry) - bigNumberDigits[i];
-                        carry = 0;
-                    } else {
-                        carry = 0;
-                    }
-
-                    tempSum[i] = temp;
-                }
-                sumSign = otherNum.getSign();
-                sum = tempSum;
-                BigNumber answer = new BigNumber(sumSign, sum);
-                //normalize answer here when normalize() is written
-                result = answer.toString();
-            }
-        }
-        return result;
+        return this;
     }
 
     /**
-     * placeholder
+     * normalize
      *
-     * @param otherNum
-     * @return
+     * author Klaydon Balicanta
+     * removes front set of excess padded signs or buffered 0's
      */
-    public String subtract(BigNumber otherNum)
-    {
+    public void normalize() {
+        int indexHalt = 0;
 
-        if(sign != otherNum.getSign()) //numbers have different signs
-        {
-            //match the signs up and then add them together
-            if(sign == NEG) //first number negative, second number positive
-            {
-                otherNum.setSign(NEG);
-                return add(otherNum);
-            }
-            else //first number positive, second number negative
-            {
-                otherNum.setSign(POS);
-                return add(otherNum);
+        if (this.getSign() != 0)
+            this.bigNumberDigits = Arrays.copyOfRange(this.bigNumberDigits, 1, (bigNumberDigits.length - 1));
+
+        for(int i = 0; i < this.bigNumberDigits.length; i++) {
+            if(bigNumberDigits[indexHalt] != bigNumberDigits[indexHalt + 1]) {
+                indexHalt++;
+            } else {
+                i = 999999999;    //this is used to break out of the loop
             }
         }
-        else //numbers have the same sign
-        {
-            //numbers are same sign and magnitude? answer = 0
-            //add()'s 0 padding hasn't happened yet, so check the number of digits first
-            //if they both have the same number of digits, they MAY have the same magnitude
-            //if they don't, then we know they don't have the same magnitude
-            if(bigNumberDigits.length == otherNum.getNumber().length)
-            {
-                //now we need to check them digit by digit and count how many matches there are
-                int sameMag = 0;
-                for(int a = 0; a < bigNumberDigits.length; a++)
-                {
-                    if(bigNumberDigits[a] == otherNum.getNumber()[a])
-                    {
-                        sameMag++;
-                    }
-                }
+        this.bigNumberDigits = Arrays.copyOfRange(this.bigNumberDigits, (indexHalt), (bigNumberDigits.length - 1));
+    }
 
-                //if we had the same number of matches as we do digits, then they're the same
-                if(sameMag == bigNumberDigits.length)
-                {
-                    BigNumber answer = new BigNumber(POS, new int[1]);
-                    return answer.toString();
-                }
-            }
+    /**
+     * equals
+     *
+     * determines whether compared BigNumber is equal to an
+     * input BigNumber
+     *
+     * author Klaydon Balicanta
+     * @return boolean value of equality check
+     */
+    public boolean equals(BigNumber bn) {
+        this.normalize();
+        bn.normalize();
 
-            //so, they aren't the same magnitude but have the same signs?
-            //change the sign of the second number according to the first one's sign and send it to add()
-            if(sign == NEG) //first number negative, set second number to positive
-            {
-                otherNum.setSign(POS);
-                return add(otherNum);
+        if ((bn.getSign() != this.getSign()) || (bn.bigNumberDigits.length != this.bigNumberDigits.length)) {
+            return false;
+        } else {
+            for(int i = 0; i < this.bigNumberDigits.length; i++) {
+                if(this.bigNumberDigits[i] != bn.bigNumberDigits[i])
+                    return false;
             }
-            else //first number positive, set second number to negative
-            {
-                otherNum.setSign(NEG);
-                return add(otherNum);
-            }
+            return true;
         }
     }
 
     /**
-     * weird private constructor because this method of making a BigNumber should not be public,
-     * but I need to use this elsewhere currently
-     * @param newsign
-     * @param newdigits
+     * compareTo
+     *
+     * compares BigNumber object to input BigNumber
+     * Compares this object with the specified object for order.
+     * Returns a negative integer, zero, or a positive integer
+     * as this object is less than, equal to, or greater than
+     * the specified object.
+     *
+     * author Klaydon Balicanta
+     * @return value of comparison between this BigNumber and BigNumber argument
+     * (example:
+     * object making call bigger than argument is : 1,
+     * object making call equal to argument is : 0,
+     * object making call less-than argument is : -1)
      */
-    private BigNumber(int newsign, int[] newdigits)
-    {
-        this.setSign(newsign);
-        this.setNumber(newdigits);
-    }
+    public int compareTo(BigNumber bn) {
+        BigNumber toCompare = bn;
+        int value = 0; //variable to hold greater(1), equal(0), or less than(-1) value
+        if(this.sign() > toCompare.sign()) {
+            return 1;   /*return positive integer if this is bigger than argument*/
+        } else if (this.sign() < toCompare.sign()) {
+            return -1;  /*will return negative integer if this is lesser than argument*/
+        } else {
+            this.normalize();
+            bn.normalize();
+            /*NEED TO DOUBLE CHECK FOR SIGN AT BEGINNING AND REMOVE
+            FUNCTIONALITY FOR ADDING NEGATIVE (1) BUFFER INCONSISTENT*/
+            if(this.getNumber().length < toCompare.getNumber().length) {
+                int[] buff = new int[toCompare.getNumber().length - this.getNumber().length];
+                for (int a  : buff) {a = 0;}
+                int[] both = concat(buff, this.getNumber());
+                this.bigNumberDigits = both;
+            } else if (this.getNumber().length > toCompare.getNumber().length) {
+                int[] buff = new int[this.getNumber().length - toCompare.getNumber().length];
+                for (int a  : buff) {a = 0;}
+                int[] both = concat(buff, toCompare.getNumber());
+                toCompare = new BigNumber(both.toString());
+            }
+            /**********************************************/
 
-    /*GETTERS AND SETTERS*/
+            for(int i = this.bigNumberDigits.length; i>0; i--) {
+                //System.out.println(this.bigNumberDigits.length + " " + toCompare.bigNumberDigits.length);
+                if(this.bigNumberDigits[i-1] > toCompare.bigNumberDigits[i-1]) {
+                    value = 1;
+                } else if (this.bigNumberDigits[i-1] < toCompare.bigNumberDigits[i-1]) {
+                    value = -1;
+                } else {
+                    value = 0;
+                }
+            }
+            return value;
+
+            //irrelevant
+            /*will return 0 if compared BigNumber and this BigNumber object are equal sign*/
+        }
+    }
 
     /**
      *
+     * @param a
+     * @param b
      * @return
+     */
+    public int[] concat(int[] a, int[] b) {
+        int aLen = a.length;
+        int bLen = b.length;
+        int[] c= new int[aLen+bLen];
+        System.arraycopy(a, 0, c, 0, aLen);
+        System.arraycopy(b, 0, c, aLen, bLen);
+        return c;
+    }
+
+    /**
+     * getNumber
+     *
+     * getter for this objects array of ints holding BigNumber digits
+     *
+     * @return the number representation of this BigNumber object
      */
     public int[] getNumber() {
         return this.bigNumberDigits;
     }
 
     /**
+     * setNumber
      *
+     * setter for this objects array of ints holding BigNumber digits
+     *
+     * @param input is new array of digits and, thus, the new value of this BigNumber object
      */
     public void setNumber(int[] input) {
         this.bigNumberDigits = input;
     }
 
     /**
+     * getSign
      *
-     * @return
+     * getter for this objects sign
+     *
+     * @return sign of this BigNumber object
      */
     public int getSign() {
         return this.sign;
     }
 
     /**
+     * setSign
      *
-     * @param input
+     * setter for this objects sign
+     *
+     * @param input new sign
      */
     private void setSign(int input) {
         if(input == 0 || input == 1)
             this.sign = input;
+    }
+
+    /**
+     * sign
+     *
+     * author Klaydon Balicanta
+     * @return the value of a BigNumber as a 0 (positive) or 1 (negative)
+     * */
+    private int sign() {
+        return this.sign;
+    }
+
+    /**
+     * toString
+     *
+     * converts BigNumber object into a printable String and returns that String
+     *
+     * author Klaydon Balicanta
+     * Made modifications taken from Erin Quigley's code to check if sign is negative
+     * @return String representation of BigNumber object
+     */
+    @Override
+    public String toString() {
+        String result = "";
+        if(sign == NEG)
+            result += "-";
+
+        for(int i = 0; i < this.bigNumberDigits.length; i++) {
+            result += this.bigNumberDigits[i];
+        }
+        return result;
     }
 }
